@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+	<LangVersion>preview</LangVersion>
+	<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  </PropertyGroup>
+	
+  <ItemGroup>
+	<PackageReference Include="CsvHelper" Version="30.0.1" />
+	<PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+	<PackageReference Include="Microsoft.ML" Version="2.0.0" />
+	<PackageReference Include="Microsoft.ML.AutoML" Version="0.20.0" />
+	<PackageReference Include="Microsoft.ML.DataView" Version="2.0.0" />
+	<PackageReference Include="Microsoft.ML.Experimental" Version="0.20.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+
+	<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
+
+	<PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+	<PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+	<PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
+	<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\DataModelsGenerator\DataModelsGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\DataModels\DataModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="c:\Temp\automl.json" Label="Source" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="logs\" />
+  </ItemGroup>
+
+</Project>

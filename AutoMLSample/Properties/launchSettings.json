@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "AutoMLSample": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "MLNET_BACKEND ": "ONEDAL"
+      }
+    }
+  }
+}
