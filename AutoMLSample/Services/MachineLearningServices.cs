@@ -49,9 +49,8 @@ internal static class MachineLearningServices
                     .Append(Context.Auto().BinaryClassification(labelColumnName: columnInference.ColumnInformation.LabelColumnName));
                 break;
             case nameof(Scenario.MulticlassClassification):
-                pipeline = Context.Transforms
-                    .Conversion.MapValueToKey(columnInference.ColumnInformation.LabelColumnName, columnInference.ColumnInformation.LabelColumnName)
-                    .Append(Context.Auto().Featurizer(data, columnInformation: columnInference.ColumnInformation))
+                pipeline = Context.Auto().Featurizer(data, columnInformation: columnInference.ColumnInformation)
+                    .Append(Context.Transforms.Conversion.MapValueToKey(columnInference.ColumnInformation.LabelColumnName, columnInference.ColumnInformation.LabelColumnName))
                     .Append(Context.Auto().MultiClassification(labelColumnName: columnInference.ColumnInformation.LabelColumnName));
                 break;
             case nameof(Scenario.Regression):

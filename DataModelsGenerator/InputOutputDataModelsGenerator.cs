@@ -9,7 +9,6 @@ using Microsoft.ML.Data;
 using DataModels.Models;
 using System.Linq;
 using System;
-using Tensorflow.Contexts;
 
 namespace DataModelsGenerator;
 

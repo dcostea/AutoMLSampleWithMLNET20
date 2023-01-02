@@ -27,7 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\DataModels\DataModels.csproj" ReferenceOutputAssembly="true" />
+	  <ProjectReference Include="..\DataModels\DataModels.csproj" />
 	</ItemGroup>
 
 	<!--<ItemGroup>
@@ -44,12 +44,8 @@
 			<TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_ML_AutoML)\lib\netstandard2.0\Microsoft.ML.AutoML.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_ML_DataView)\lib\netstandard2.0\Microsoft.ML.DataView.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="$(PKGNewtonsoft_Json)\lib\netstandard2.0\Newtonsoft.Json.dll" IncludeRuntimeDependency="false" />
-
-			<!--<TargetPathWithTargetPlatformMoniker Include="c:\Users\dcost\source\repos\AutoMLSampleWithMLNET30\DataModels\bin\Debug\netstandard2.0\DataModels.dll" IncludeRuntimeDependency="false" />-->
-			<!--<TargetPathWithTargetPlatformMoniker Include="$(OutputPath)\DataModels.dll" IncludeRuntimeDependency="false" />-->
-			
+			<TargetPathWithTargetPlatformMoniker Include="..\DataModels\$(OutputPath)\DataModels.dll" IncludeRuntimeDependency="false" />
 			<TargetPathWithTargetPlatformMoniker Include="@(ResolvedCompileFileDefinitions)" IncludeRuntimeDependency="false" />
-
 		</ItemGroup>
 	</Target>
 
