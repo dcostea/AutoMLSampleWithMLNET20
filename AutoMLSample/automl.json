@@ -1,0 +1,9 @@
+{
+  "Scenario": "BinaryClassification",
+  "TrainingTime": 60,
+  "LabelColumn": "Survived",
+  "CsvDataPath": "c:\\Temp\\titanic.csv",
+  "ColumnMapping": {
+	  "Source": "Single"
+  }  
+}
