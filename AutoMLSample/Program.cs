@@ -15,20 +15,27 @@ internal class Program
             .WriteTo.File(@"logs\log.txt", Serilog.Events.LogEventLevel.Debug, "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}")
             .CreateBootstrapLogger();
 
-        var c = new GeneratedDataModels.InputDataModel();
-
+        // read settings
         var jsonData = File.ReadAllText(@"c:\Temp\automl.json");
         var trainerSettings = JsonConvert.DeserializeObject<TrainerSettings>(jsonData);
         MachineLearningServices.TrainerSettings = trainerSettings;
 
+        // load dataset and infer columns
         (var trainTestData, var columnInference) = MachineLearningServices.LoadDataAndColumns();
+
+        // auto ml
         var experimentResult = await MachineLearningServices.AutoTrainAsync(trainTestData.TrainSet, columnInference);
         var model = experimentResult.Model as TransformerChain<ITransformer>;
 
+        // evaluate model
         var transformedTestingData = model.Transform(trainTestData.TestSet);
         var transformedData = model.Transform(trainTestData.TestSet);
-        MachineLearningServices.Evaluate(transformedTestingData, columnInference.ColumnInformation.LabelColumnName, showsConfusionMatrix: false);
+        //MachineLearningServices.Evaluate(transformedTestingData, columnInference.ColumnInformation.LabelColumnName, showsConfusionMatrix: false);
+        
+        // permutation feature importance
         MachineLearningServices.PFI(0.01F, model.LastTransformer, transformedData, columnInference.ColumnInformation.LabelColumnName);
+        
+        // correlation matrix
         MachineLearningServices.PearsonCorrelationMatrix(0.9F, trainTestData.TrainSet);
     }
 }
