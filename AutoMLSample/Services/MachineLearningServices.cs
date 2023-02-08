@@ -45,6 +45,7 @@ internal static class MachineLearningServices
         switch (TrainerSettings.Scenario)
         {
             case nameof(Scenario.BinaryClassification):
+                //Featurizer(IDataView data, string outputColumnName = "Features", string[] catelogicalColumns = null, string[] numericColumns = null, string[] textColumns = null, string[] imagePathColumns = null, string[] excludeColumns = null)
                 pipeline = Context.Auto().Featurizer(data, columnInformation: columnInference.ColumnInformation)
                     .Append(Context.Auto().BinaryClassification(labelColumnName: columnInference.ColumnInformation.LabelColumnName));
                 break;
@@ -133,6 +134,7 @@ internal static class MachineLearningServices
 
     internal static void PFI(float threshold, ITransformer transformer, IDataView transformedData, string label)
     {
+        WriteLineColor("----------------------------------------------------------------------------------");
         WriteLineColor(" STEP 2: PFI (permutation feature importance)");
         WriteLineColor("----------------------------------------------------------------------------------");
         WriteLineColor($" PFI, threshold: {threshold}");
@@ -165,7 +167,8 @@ internal static class MachineLearningServices
             case nameof(Scenario.MulticlassClassification):
                 var pfiMulticlassClassification = Context.MulticlassClassification.PermutationFeatureImportance(transformer, transformedData, label, permutationCount: 5);
                 ////var metricsMulticlassClassification = pfi.Select(p => (p.Key, p.Value.MicroAccuracy)).OrderBy(m => m.MicroAccuracy.Mean);
-                // patching dot issue
+
+                // patching dot issue when collecting the multiclass classification metrics
                 var patchedPfiMulticlassClassification = pfiMulticlassClassification.Select(p => new KeyValuePair<string, MulticlassClassificationMetricsStatistics>(p.Key.Split(".").First(), p.Value));
                 var groupedPfiMulticlassClassification = patchedPfiMulticlassClassification.GroupBy(p => p.Key).ToDictionary(g => g.Key, g => g.Select(x => x.Value));
                 var metricsMulticlassClassification = groupedPfiMulticlassClassification.Select(p => new MicroAccuracyModel
@@ -194,7 +197,8 @@ internal static class MachineLearningServices
             case nameof(Scenario.Regression):
                 var pfiRegression = Context.Regression.PermutationFeatureImportance(transformer, transformedData, label, permutationCount: 5);
                 ////var metricsRegression = pfi.Select(p => (p.Key, p.Value.RSquared)).OrderBy(m => m.RSquared.Mean);
-                // patching dot issue
+
+                // patching dot issue when collecting the regression metrics
                 var patchedPfiRegression = pfiRegression.Select(p => new KeyValuePair<string, RegressionMetricsStatistics>(p.Key.Split(".").First(), p.Value));
                 var groupedPfiRegression = patchedPfiRegression.GroupBy(p => p.Key).ToDictionary(g => g.Key, g => g.Select(x => x.Value));
                 var metricsRegression = groupedPfiRegression.Select(p => new RSquaredModel

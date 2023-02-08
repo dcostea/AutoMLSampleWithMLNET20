@@ -96,6 +96,7 @@ public static class ConsoleHelpers
 
     internal static void ToConsole(this Matrix<double> matrix, string[] header, float threshold, bool showLegend = false)
     {
+        WriteLineColor("----------------------------------------------------------------------------------");
         WriteLineColor(" STEP 3: CORRELATION MATRIX");
         WriteLineColor($"----------------------------------------------------------------------------------");
         WriteLineColor($" Correlation Matrix, threshold: {threshold}");

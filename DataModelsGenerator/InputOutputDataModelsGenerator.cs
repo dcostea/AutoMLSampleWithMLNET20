@@ -41,21 +41,12 @@ public class InputOutputDataModelsGenerator : IIncrementalGenerator
 
         initContext.RegisterSourceOutput(content, (context, content) =>
         {
-            // build input data model
-
-            ////var options = initContext.AnalyzerConfigOptionsProvider.Select((f, cancellationToken) => f.GetOptions(content.Single()));
-            ////var optionsContent = options.Select((o, ct) => string.Join(",", o.Keys));
-            ////string label = string.Empty;
-            ////initContext.RegisterSourceOutput(
-            ////            options,
-            ////            (context, settings) =>
-            ////            {
-            ////                settings.TryGetValue("Label", out var label0);
-            ////                label = label0;
-            ////            });
+            // read settings and infer columns
 
             var trainerSettings = JsonConvert.DeserializeObject<TrainerSettings>(content.Single().GetText().ToString());
             var columnInferenceResults = mlContext.Auto().InferColumns(trainerSettings.CsvDataPath, labelColumnName: trainerSettings.LabelColumn, groupColumns: false);
+
+            // build input data model using inferred columns
 
             var inputModelSource = new StringBuilder();
             inputModelSource.Append("""
@@ -74,7 +65,7 @@ public class InputDataModel
 
             foreach (var column in columnInferenceResults.TextLoaderOptions.Columns)
             {
-                // if column is in columnMapping, use the type and name in that
+                // if column is in columnMapping, use the types and names
                 DataKind dataKind;
 
                 if (trainerSettings.ColumnMapping != null && trainerSettings.ColumnMapping.ContainsKey(column.Name))
@@ -90,7 +81,7 @@ public class InputDataModel
                 inputModelSource.AppendLine($"    public {dataKind} {column.Name} {{ get; set; }}");
                 inputModelSource.AppendLine();
 
-                //TODO Accomodate VectorType (array) columns
+                //TODO Accomodate VectorType (array) columns if any
             }
 
             inputModelSource.Append("}");
@@ -98,10 +89,7 @@ public class InputDataModel
             var inputModelSourceText = SourceText.From(inputModelSource.ToString(), Encoding.UTF8);
             context.AddSource($"{InputDataModel}.cs", inputModelSourceText);
 
-
-
-
-            // build output data model
+            // build output data models (according to scenario type)
 
             StringBuilder outputModelSource = new();
 
@@ -109,79 +97,79 @@ public class InputDataModel
             {
                 case nameof(Scenario.BinaryClassification):
                     outputModelSource.Append("""
-        // auto-generated readonly code
-        using System;
-        using Microsoft.ML;
-        using Microsoft.ML.Data;
+// auto-generated readonly code
+using System;
+using Microsoft.ML;
+using Microsoft.ML.Data;
 
-        namespace GeneratedDataModels;
+namespace GeneratedDataModels;
 
-        public class OutputDataModel
-        {
-            [ColumnName("PredictedLabel")]
-            public string PredictedLabel { get; set; }
+public class OutputDataModel
+{
+    [ColumnName("PredictedLabel")]
+    public string PredictedLabel { get; set; }
 
-            //TODO float Score for multiclass
-            [ColumnName("Score")]
-            public float Score { get; set; }
+    //TODO float Score for multiclass
+    [ColumnName("Score")]
+    public float Score { get; set; }
 
-            [ColumnName("Score")]
-            public float Probability { get; set; }
+    [ColumnName("Score")]
+    public float Probability { get; set; }
 
-            [ColumnName("Features")]
-            public float[] Features { get; set; }
-        }
-        """
+    [ColumnName("Features")]
+    public float[] Features { get; set; }
+}
+"""
                     );
                     break;
 
                 case nameof(Scenario.MulticlassClassification):
                     outputModelSource.Append("""
-        // auto-generated readonly code
-        using System;
-        using Microsoft.ML;
-        using Microsoft.ML.Data;
+// auto-generated readonly code
+using System;
+using Microsoft.ML;
+using Microsoft.ML.Data;
 
-        namespace GeneratedDataModels;
+namespace GeneratedDataModels;
 
-        public class OutputDataModel
-        {
-            [ColumnName("PredictedLabel")]
-            public string PredictedLabel { get; set; }
+public class OutputDataModel
+{
+    [ColumnName("PredictedLabel")]
+    public string PredictedLabel { get; set; }
 
-            //TODO float Score for multiclass
-            [ColumnName("Score")]
-            public float[] Score { get; set; }
+    //TODO float Score for multiclass
+    [ColumnName("Score")]
+    public float[] Score { get; set; }
 
-            [ColumnName("Score")]
-            public float Probability { get; set; }
-        }
-        """
+    [ColumnName("Score")]
+    public float Probability { get; set; }
+}
+"""
                     );
                     break;
 
                 case nameof(Scenario.Regression):
                     outputModelSource.Append("""
-        // auto-generated readonly code
-        using System;
-        using Microsoft.ML;
-        using Microsoft.ML.Data;
+// auto-generated readonly code
+using System;
+using Microsoft.ML;
+using Microsoft.ML.Data;
 
-        namespace GeneratedDataModels;
+namespace GeneratedDataModels;
 
-        public class OutputDataModel
-        {
-            //TODO float Score for multiclass
-            [ColumnName("Score")]
-            public float[] Score { get; set; }
+public class OutputDataModel
+{
+    //TODO float Score for multiclass
+    [ColumnName("Score")]
+    public float[] Score { get; set; }
 
-            [ColumnName("Score")]
-            public float Probability { get; set; }
+    [ColumnName("Score")]
+    public float Probability { get; set; }
 
-            [ColumnName("Features")]
-            public float[] Features { get; set; }
-        }
-        """
+    [ColumnName("Features")]
+    public float[] Features { get; set; }
+}
+"""
                     );
                     break;
             }

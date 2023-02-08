@@ -19,12 +19,10 @@ public class AutoMLMonitor : IMonitor
         _stopwatch = Stopwatch.StartNew();
     }
 
-    public static AutoMLMonitor Create(SweepablePipeline pipeline)
-    {
-        return new AutoMLMonitor(pipeline);
-    }
+    public static AutoMLMonitor Create(SweepablePipeline pipeline) => new AutoMLMonitor(pipeline);
 
     public IEnumerable<TrialResult> GetBestTrials() => _bestTrials;
+
     public IEnumerable<TrialResult> GetCompletedTrials() => _completedTrials;
 
     public void ReportBestTrial(TrialResult result)
@@ -67,10 +65,9 @@ public class AutoMLMonitor : IMonitor
 
     public void ReportRunningTrial(TrialSettings trialSettings)
     {
-        // HERE
         // elapsed, remaining, percent progress
-        //var trainer = ExtractTrainer(trialSettings);
-        //Log.Debug(" {@trainer} trial...", trainer.EstimatorType);
+        ////var trainer = ExtractTrainer(trialSettings);
+        ////Log.Debug(" {@trainer} trial...", trainer.EstimatorType);
     }
 
     public EstimatorType GetBestTrial(TrialResult result)
